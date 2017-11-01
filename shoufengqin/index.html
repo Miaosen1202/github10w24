@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        #box{
+            width: 1150px;
+            height: 400px;
+            margin:50px auto;
+            border:1px solid #ccc;
+            overflow: hidden;
+        }
+        ul{
+            width: 1300px;
+        }
+        li{
+            float: left;
+            width: 240px;
+            height: 400px;
+
+        }
+    </style>
+</head>
+<body>
+    <div id="box">
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <script>
+        var box = document.getElementById("box");
+        var ul = box.children[0];
+        var lis = ul.children;
+        for(var i  =0;i<lis.length;i++){
+            lis[i].style.backgroundImage = "url(images/"+(i+1)+".jpg)";
+            lis[i].onmouseover = function(){
+                for(var i = 0;i<lis.length;i++){
+                    slow_animate(lis[i],{"width":100})
+                }
+                slow_animate(this,{"width":800})
+            }
+        }
+        box.onmouseout = function(){
+            for(var i = 0;i<lis.length;i++){
+                slow_animate(lis[i],{"width":240})
+            }
+        }
+        function slow_animate(obj,json,fn){
+            clearInterval(obj.timer);
+            obj.timer = setInterval(function(){
+                var flag = true;
+                for(var k in json){
+                    if(k=="opacity"){
+                        var leader = getStyle(obj,k)*100;
+                        var target = json[k]*100;
+                        var step = (target-leader)/10;
+                        step = step>0?Math.ceil(step):Math.floor(step);
+                        leader = leader+step;
+                        obj.style[k] = leader/100;
+                    }else if(k=="zIndex"){
+                        obj.style.zIndex = json[k];
+                    }else{
+                        var leader = parseInt(getStyle(obj,k))||0;
+                        var target = json[k];
+                        var step = (target-leader)/10;
+                        step = step>0?Math.ceil(step):Math.floor(step);
+                        leader = leader+step;
+                        obj.style[k] = leader+"px";
+                    }
+                    if(leader!=target){
+                        flag=false;
+                    }
+                }
+                if(flag){
+                    clearInterval(obj.timer);
+                    if(fn){
+                        fn();
+                    }
+                }
+            },15)
+
+
+        }
+        function getStyle(obj,attr){
+            if(window.getComputedStyle){
+                return window.getComputedStyle(obj,null)[attr];
+            }else{
+                return obj.currentStyle[attr];
+            }
+        }
+    </script>
+</body>
+</html>

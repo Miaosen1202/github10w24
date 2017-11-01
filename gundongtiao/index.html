@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            padding: 0;
+            margin:0;
+
+        }
+        #box{
+            width: 300px;
+            height: 500px;
+            border:1px solid red;
+            margin:100px;
+            position: relative;
+            overflow: hidden;
+        }
+        p{
+            position: absolute;
+            top:0;
+            left:0;
+            padding:5px 18px 5px 5px;
+        }
+        .scroll{
+            width: 15px;
+            height: 100%;
+            background: #666;
+            position: absolute;
+            right:0;
+            top:0;
+        }
+        #bar{
+            width: 100%;
+            position: absolute;
+            top:0;
+            left:0;
+            background:red;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="box">
+        <p id="con">文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文
+            字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文
+          字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文
+            字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字
+            字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字
+            字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字
+            字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字
+            字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字
+            字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字字文字文字文字文字文字文字文字文字
+        </p>
+        <div class="scroll">
+            <div id="bar"></div>
+        </div>
+    </div>
+    <script>
+        var box = document.getElementById("box");
+        var con = document.getElementById("con");
+        var bar = document.getElementById("bar");
+        //滚动条的高度/滚动条的总高度 = 显示的内容的高度/内容的实际高度
+        //滚动条的总高度 = box的高度
+        //显示内容的高度 = box的高度
+        //内容的实际高度 = con的高度
+        //如果内容超出box的高度才会显示滚动条
+        if(con.offsetHeight>box.offsetHeight){
+            bar.style.height = box.offsetHeight/con.offsetHeight*box.offsetHeight+"px";
+        }else{
+            bar.style.height = 0;
+        }
+        //当鼠标按下时获取鼠标在滚动条上的位置
+        bar.onmousedown = function(e){
+            var e = event || window.event;
+            var pageY = e.pageY || e.clientY+document.documentElement.scrollTop;
+            var barBoxY = pageY-box.offsetTop-bar.offsetTop;
+            //当鼠标在页面上移动时
+            document.onmousemove = function(e){
+                var e = event || window.event;
+                var pageY = e.pageY || e.clientY+document.documentElement.scrollTop;
+                var barY = pageY-barBoxY-box.offsetTop;
+                //进行限制
+                barY = barY<0?0:barY;
+                barY = barY>box.offsetHeight-bar.offsetHeight?box.offsetHeight-bar.offsetHeight:barY;
+                //给bar跟着鼠标走
+                bar.style.top = barY+"px";
+                //清除选中文字
+                window.getSelection ?
+                        window.getSelection().removeAllRanges() :
+                        document.selection.empty();
+                //按照比例文字也要相应的移动
+                //内容移动的距离/bar移动的距离 =
+                //内容移动的最大距离/bar移动的最大距离
+                //内容移动的的最大距离 = con.offsetHeight-box.offsetHeight
+                //bar移动的最大距离 = box.offsetHeight-bar.offsetHeight
+                var rate = (con.offsetHeight-box.offsetHeight)/(box.offsetHeight-bar.offsetHeight);
+                con.style.top = -rate*barY+"px";
+            }
+        }
+        document.onmouseup = function(){
+            document.onmousemove = null;
+        }
+
+    </script>
+</body>
+</html>

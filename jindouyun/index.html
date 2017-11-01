@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{
+            background: #333;
+        }
+       *{
+           padding:0;
+           margin:0;
+           list-style: none;
+       }
+        .nav{
+            width: 800px;
+            height: 42px;
+            margin:100px auto;
+            border-radius: 5px;
+            position: relative;
+            background:#fff url(images/rss.png) no-repeat right center;
+        }
+        span{
+            width: 83px;
+            height: 42px;
+            background: url(images/cloud.gif) no-repeat;
+            position: absolute;
+            left:0;
+            top:0;
+
+        }
+        .navBar{
+            position: relative;
+
+        }
+        .navBar li{
+            float: left;
+            width: 83px;
+            height: 42px;
+            float: left;
+            text-align: center;
+            line-height: 42px;
+
+        }
+
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <span id="cloud"></span>
+        <ul class="navBar">
+            <li>北京校区</li>
+            <li>上海校区</li>
+            <li>广州校区</li>
+            <li>深圳校区</li>
+            <li>武汉校区</li>
+            <li>关于我们</li>
+            <li>联系我们</li>
+            <li>招贤纳士</li>
+        </ul>
+
+    </div>
+    <script>
+        var cloud = document.getElementById("cloud");
+        var navBar = document.getElementsByClassName("navBar")[0];
+        var lis = navBar.children;
+        var act = 0;
+        for(var i = 0;i<lis.length;i++){
+            lis[i].onmouseover = function(){
+                var target = this.offsetLeft;
+                slow_animate(cloud,{"left":target});
+            }
+            lis[i].onmouseout = function(){
+                slow_animate(cloud,{"left":act});
+            }
+            lis[i].onclick = function(){
+                act = this.offsetLeft;
+            }
+        }
+        function slow_animate(obj,json,fn){
+            clearInterval(obj.timer);
+            obj.timer = setInterval(function(){
+                var flag = true;
+                for(var k in json){
+                    if(k=="opacity"){
+                        var leader = getStyle(obj,k)*100;
+                        var target = json[k]*100;
+                        var step = (target-leader)/10;
+                        step = step>0?Math.ceil(step):Math.floor(step);
+                        leader = leader+step;
+                        obj.style[k] = leader/100;
+                    }else if(k=="zIndex"){
+                        obj.style.zIndex = json[k];
+                    }else{
+                        var leader = parseInt(getStyle(obj,k))||0;
+                        var target = json[k];
+                        var step = (target-leader)/10;
+                        step = step>0?Math.ceil(step):Math.floor(step);
+                        leader = leader+step;
+                        obj.style[k] = leader+"px";
+                    }
+                    if(leader!=target){
+                        flag=false;
+                    }
+                }
+                if(flag){
+                    clearInterval(obj.timer);
+                    if(fn){
+                        fn();
+                    }
+                }
+            },15)
+
+
+        }
+        function getStyle(obj,attr){
+            if(window.getComputedStyle){
+                return window.getComputedStyle(obj,null)[attr];
+            }else{
+                return obj.currentStyle[attr];
+            }
+        }
+
+    </script>
+</body>
+</html>
